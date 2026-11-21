@@ -152,3 +152,5 @@ You could extend the schema to include a `wishlist` text field in the `participa
 ## License
 
 MIT - Feel free to use and modify!
+
+Site do Amigo Secreto — publicação GitHub Pages.
