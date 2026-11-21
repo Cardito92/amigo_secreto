@@ -1,104 +1,91 @@
-// Supabase Client Configuration
-// Replace these values with your own Supabase project credentials
 
+// Supabase Client Configuration
 const SUPABASE_URL = 'https://zpvgrhdhpeszogznftju.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_Zpoyi29TmYXPtL11lX1qfg_580_2ek2';
 
-// Initialize Supabase client (loaded from CDN in HTML)
-let supabase;
+// Initialize Supabase client
+let supabaseClient;
 
 function initSupabase() {
     if (typeof window.supabase !== 'undefined') {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
         return true;
     }
+
     console.error('Supabase library not loaded');
     return false;
 }
 
 // Database operations using secure RPC functions
 const db = {
-    // Create a new group with participants
     async createGroup(groupName, participantNames, maxExclusions) {
-        const { data, error } = await supabase.rpc('create_group', {
+        const { data, error } = await supabaseClient.rpc('create_group', {
             p_name: groupName,
             p_participant_names: participantNames,
             p_max_exclusions: maxExclusions
         });
-
         if (error) throw error;
         return data;
     },
 
-    // Get group by admin token
     async getGroupByAdminToken(adminToken) {
-        const { data, error } = await supabase.rpc('get_group_by_admin_token', {
+        const { data, error } = await supabaseClient.rpc('get_group_by_admin_token', {
             p_admin_token: adminToken
         });
-
         if (error) throw error;
         return data;
     },
 
-    // Get participant by token
     async getParticipantByToken(token) {
-        const { data, error } = await supabase.rpc('get_participant_by_token', {
+        const { data, error } = await supabaseClient.rpc('get_participant_by_token', {
             p_token: token
         });
-
         if (error) throw error;
         return data;
     },
 
-    // Get participants with exclusions for assignment algorithm (admin only)
     async getParticipantsForAssignment(adminToken) {
-        const { data, error } = await supabase.rpc('get_participants_for_assignment', {
+        const { data, error } = await supabaseClient.rpc('get_participants_for_assignment', {
             p_admin_token: adminToken
         });
-
         if (error) throw error;
         return data;
     },
 
-    // Submit exclusions for a participant
     async submitExclusions(participantToken, exclusions) {
-        const { data, error } = await supabase.rpc('submit_exclusions', {
+        const { data, error } = await supabaseClient.rpc('submit_exclusions', {
             p_token: participantToken,
             p_exclusions: exclusions
         });
-
         if (error) throw error;
         return data;
     },
 
-    // Update group status (admin only)
     async updateGroupStatus(adminToken, status) {
-        const { data, error } = await supabase.rpc('update_group_status', {
+        const { data, error } = await supabaseClient.rpc('update_group_status', {
             p_admin_token: adminToken,
             p_status: status
         });
-
         if (error) throw error;
         return data;
     },
 
-    // Save assignments (admin only)
     async saveAssignments(adminToken, assignments) {
-        const { data, error } = await supabase.rpc('save_assignments', {
+        const { data, error } = await supabaseClient.rpc('save_assignments', {
             p_admin_token: adminToken,
             p_assignments: assignments
         });
-
         if (error) throw error;
         return data;
     },
 
-    // Mark group as assigned (convenience wrapper)
     async markGroupAssigned(adminToken) {
         return this.updateGroupStatus(adminToken, 'assigned');
     }
 };
 
-// Export for use in other modules
 window.db = db;
 window.initSupabase = initSupabase;
